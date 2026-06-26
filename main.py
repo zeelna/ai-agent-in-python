@@ -1,5 +1,6 @@
 import os
 import argparse
+import sys
 
 from dotenv import load_dotenv
 from google import genai
@@ -34,11 +35,29 @@ def main():
     # Create a new instance variable of a Gemini client, using the 'google' library
     client = genai.Client(api_key=api_key)
 
-    # Call the LLM model and print results
-    response = generate_content(client, messages)
+    # Agent Loop: Call the LLM model. Wrapping the model-calling-logic in loop.
+    # so the agent can iterate on a task until it's done working and has a final response for the user
+    for _ in range(20):
+        response = generate_content(client=client, messages=messages)
+        # .candidates property: a list of model's response(s) to the last prompt (usually just one)
+        if response.candidates is not None:
+            # Each iteration: model is aware of all the messages and tool-requests that model has generated so far
+            for candidate in response.candidates:
+                if candidate.content is not None:
+                    # Add all the "candidates" to the conversation history so the model can see them in future iterations
+                    messages.append(candidate.content)
 
-    # Display the response and more info, if --verbose CLI argument was given
-    print_conversation(request=args.user_prompt, response=response, is_verbose=args.verbose)
+        generate_conversation(response=response, messages_history=messages, is_verbose=args.verbose)
+
+        # Display the response and more info, if --verbose CLI argument was given
+        result = print_conversation(request=args.user_prompt, response=response, is_verbose=args.verbose)
+        if result:
+            print("Final response:")
+            print(result)
+            return
+
+    print("Maximum iterations reached without a final response")
+    sys.exit(1)
 
 def generate_content(client: genai.Client, messages: list[types.Content] ):
     # Get a response from gemini-2.5-flash-model
@@ -65,37 +84,49 @@ def generate_content(client: genai.Client, messages: list[types.Content] ):
 
     return response
 
-def print_conversation(request, response, is_verbose) -> None:
+
+def generate_conversation(response, messages_history, is_verbose):
+    function_responses = []
+    for function_call in response.function_calls:
+        function_call_result = call_function(function_call=function_call, verbose=is_verbose)
+
+        if not function_call_result.parts:
+            raise Exception("EXCEPTION: cannot call function - missing .parts\n")
+
+        function_response = function_call_result.parts[0].function_response
+        if function_response is None:
+            raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response\n")
+
+        response_content = function_call_result.parts[0].function_response.response
+        if response_content is None:
+            raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response.response\n")
+
+        # Model must see results of function calls it makes. Append results of function calls in history of messages.
+        function_responses.append(function_call_result.parts[0])
+
+        if is_verbose:
+            print(f"-> {function_call_result.parts[0].function_response.response}")
+        # print(f"Calling function: {function_call.name}({function_call.args})")
+
+    # to avoid adding empty list into the parts= argument of types.Content()
+    if function_responses:
+        messages_history.append(types.Content(role="user", parts=function_responses))
+
+
+def print_conversation(request, response, is_verbose) -> str | None:
     # Print number of tokens consumed by this model interaction
-    if is_verbose:
-        print(f"User prompt: {request}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-
-
-    if len(response.function_calls) > 0:
-        # Print function calls LLM has access to:
-        for function_call in response.function_calls:
-
-            function_call_result = call_function(function_call=function_call, verbose=is_verbose)
-
-            if not function_call_result.parts:
-                raise Exception("EXCEPTION: cannot call function - missing .parts\n")
-
-            function_response = function_call_result.parts[0].function_response
-            if function_response is None:
-                raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response\n")
-
-            response_content = function_call_result.parts[0].function_response.response
-            if response_content is None:
-                raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response.response\n")
-
-            if is_verbose:
-                print(f"-> {function_call_result.parts[0].function_response.response}")
-            #print(f"Calling function: {function_call.name}({function_call.args})")
-    else:
+    if not response.function_calls:
+        if is_verbose:
+            return (
+                f"User prompt: {request}\n"
+                f"Prompt tokens: {response.usage_metadata.prompt_token_count}\n"
+                f"Response tokens: {response.usage_metadata.candidates_token_count}\n"
+            )
         # Print the response from Gemini's model
-        print(response.text)
+        return response.text
+    else:
+        return None
+
 
 if __name__ == "__main__":
     main()
