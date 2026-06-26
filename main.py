@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
+from call_function import available_functions
 # import constant variable from "prompts.py"
 from prompts import system_prompt
 
@@ -49,6 +50,7 @@ def generate_content(client: genai.Client, messages: list[types.Content] ):
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,
             temperature=0,
+            tools=[available_functions]
         ),
     )
     # Verify response's 'usage_metadata' property is given
@@ -70,8 +72,14 @@ def print_conversation(request, response, is_verbose) -> None:
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
-    # Print the response from Gemini's model
-    print(response.text)
+
+    if len(response.function_calls) > 0:
+        # Print function calls LLM has access to:
+        for function_call in response.function_calls:
+            print(f"Calling function: {function_call.name}({function_call.args})")
+    else:
+        # Print the response from Gemini's model
+        print(response.text)
 
 if __name__ == "__main__":
     main()
