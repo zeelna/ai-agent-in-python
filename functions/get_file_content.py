@@ -1,6 +1,35 @@
 import os.path
+from google.genai import types
 
 MAX_CHARS = 10_000
+
+def get_schema_get_file_content():
+    """
+    Notice that, in the declaration for the LLM,
+     we don't even mention the working_directory parameter of the function!
+    We'll be passing that argument "from the outside,"
+       without the LLM agent knowing about it or being able to affect it.
+    """
+    schema_get_file_content = types.FunctionDeclaration(
+        name="get_file_content",
+        description="Get the contents of a specified file in"
+                    " a specified directory relative to the working directory,"
+                    " providing file content as a string",
+        parameters=types.Schema(
+            required=["file_path"],
+            type=types.Type.OBJECT,
+            properties={
+                "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Directory path to the specified file, "
+                                "relative to the working directory",
+                ),
+            },
+        ),
+    )
+    return schema_get_file_content
+
+
 
 def get_file_content(working_directory: str, file_path: str) -> str:
     # Get the absolute path of the working_directory
