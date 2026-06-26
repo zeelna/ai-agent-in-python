@@ -1,4 +1,40 @@
 import os.path
+from google.genai import types
+
+
+def get_schema_write_file():
+    """
+    Notice that, in the declaration for the LLM,
+     we don't even mention the working_directory parameter of the function!
+    We'll be passing that argument "from the outside,"
+       without the LLM agent knowing about it or being able to affect it.
+    """
+    schema_write_file = types.FunctionDeclaration(
+        name="write_file",
+        description="Write and overwrite the contents of a specified file in"
+                    " a specified directory relative to the working directory,"
+                    " providing new file content as a string,"
+                    " yet setting strict limits how much characters can be written."
+                    " Returning the amount of characters written into the target file",
+        parameters=types.Schema(
+            type=types.Type.OBJECT,
+            required=["file_path", "content"],
+            properties={
+                "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Directory path to the specified file where we write the contents,"
+                                " relative to the working directory",
+                ),
+                "content": types.Schema(
+                    type=types.Type.STRING,
+                    description="Content as a single string we want to write into "
+                                "the specified file in the specified directory"
+                                " relative to the working directory",
+                )
+            },
+        ),
+    )
+    return schema_write_file
 
 def write_file(working_directory: str, file_path: str, content: str) -> str:
     # Get the absolute path of the working_directory

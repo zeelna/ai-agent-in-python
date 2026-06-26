@@ -1,11 +1,18 @@
 import os.path
 from google.genai import types
 
-def schema_get_files_info():
+def get_schema_get_files_info():
+    """
+    Notice that, in the declaration for the LLM,
+     we don't even mention the working_directory parameter of the function!
+    We'll be passing that argument "from the outside,"
+       without the LLM agent knowing about it or being able to affect it.
+    """
     schema_get_files_info = types.FunctionDeclaration(
         name="get_files_info",
         description="Lists files in a specified directory relative to the working directory, providing file size and directory status",
         parameters=types.Schema(
+            required=["directory"],
             type=types.Type.OBJECT,
             properties={
                 "directory": types.Schema(

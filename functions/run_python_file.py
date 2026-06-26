@@ -1,6 +1,44 @@
 import os.path
 import subprocess
+from google.genai import types
 
+def get_schema_run_python_file():
+    """
+    Notice that, in the declaration for the LLM,
+     we don't even mention the working_directory parameter of the function;
+    We'll be passing that argument "from the outside,"
+       without the LLM agent knowing about it or being able to affect it.
+    """
+    schema_run_python_file = types.FunctionDeclaration(
+        name="run_python_file",
+        description="Run the specified python (.py) residing "
+                    "in a specified directory relative to the working directory "
+                    "with optional command-line arguments,"
+                    " and outputting a stringified output/result "
+                    "of that python file's code execution",
+        parameters=types.Schema(
+            required=["file_path"],
+            type=types.Type.OBJECT,
+            properties={
+                "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Directory path to the specified python (.py) file,"
+                                " relative to the working directory",
+                ),
+                "args": types.Schema(
+                    description="A list of stringified arguments"
+                                " to pass to the specified python (.py) file. Optional parameter",
+                    type=types.Type.ARRAY,
+                    items=types.Schema(
+                        type=types.Type.STRING,
+                        description="An individual argument from list of arguments"
+                                        " to pass to the specified python (.py) file",
+                    )
+                ),
+            },
+        ),
+    )
+    return schema_run_python_file
 
 def run_python_file(
 working_directory: str, file_path: str, args: list[str] | None = None
