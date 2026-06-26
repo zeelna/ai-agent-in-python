@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-from call_function import available_functions
+from call_function import available_functions, call_function
 # import constant variable from "prompts.py"
 from prompts import system_prompt
 
@@ -76,7 +76,23 @@ def print_conversation(request, response, is_verbose) -> None:
     if len(response.function_calls) > 0:
         # Print function calls LLM has access to:
         for function_call in response.function_calls:
-            print(f"Calling function: {function_call.name}({function_call.args})")
+
+            function_call_result = call_function(function_call=function_call, verbose=is_verbose)
+
+            if not function_call_result.parts:
+                raise Exception("EXCEPTION: cannot call function - missing .parts\n")
+
+            function_response = function_call_result.parts[0].function_response
+            if function_response is None:
+                raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response\n")
+
+            response_content = function_call_result.parts[0].function_response.response
+            if response_content is None:
+                raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response.response\n")
+
+            if is_verbose:
+                print(f"-> {function_call_result.parts[0].function_response.response}")
+            #print(f"Calling function: {function_call.name}({function_call.args})")
     else:
         # Print the response from Gemini's model
         print(response.text)
