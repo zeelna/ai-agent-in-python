@@ -3,9 +3,10 @@ import argparse
 
 from dotenv import load_dotenv
 from google import genai
-from google.genai import types, Client
+from google.genai import types
 
-
+# import constant variable from "prompts.py"
+from prompts import system_prompt
 
 
 def main():
@@ -45,6 +46,10 @@ def generate_content(client: genai.Client, messages: list[types.Content] ):
         #contents="Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
         #contents=args.user_prompt,
         contents=messages,
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            temperature=0,
+        ),
     )
     # Verify response's 'usage_metadata' property is given
     if response.usage_metadata is None:
