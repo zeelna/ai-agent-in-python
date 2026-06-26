@@ -4,11 +4,7 @@
     <list default="true" id="2433f219-8794-4ba6-ae5f-57099ba5403a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/call_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/call_function.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/get_file_content.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/get_file_content.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/get_files_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/get_files_info.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/run_python_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/run_python_file.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/functions/write_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/functions/write_file.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prompts.py" beforeDir="false" afterPath="$PROJECT_DIR$/prompts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,12 +44,12 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "08-llm-more-function-callers",
+    "git-widget-placeholder": "09-llm-calling-function-callers",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Python.test_run_python_file">
+  <component name="RunManager" selected="Python.test_write_file">
     <configuration name="test_get_file_content" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ai-agent-in-python" />
       <option name="ENV_FILES" value="" />
@@ -174,8 +170,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test_run_python_file" />
         <item itemvalue="Python.test_write_file" />
+        <item itemvalue="Python.test_run_python_file" />
         <item itemvalue="Python.test_get_file_content" />
         <item itemvalue="Python.test_get_files_info" />
         <item itemvalue="Python tests.Python tests in test_get_files_info.py" />
