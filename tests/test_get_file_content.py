@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add parent directory to path so imports work from anywhere
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from functions.get_file_content import get_file_content
 
 def test_big_content(working_directory: str, file_path: str) -> None:

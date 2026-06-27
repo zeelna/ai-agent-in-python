@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add parent directory to path so imports work from anywhere
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from functions.write_file import write_file
 
 def test_write_file(working_directory: str, file_path: str, content: str) -> None:
