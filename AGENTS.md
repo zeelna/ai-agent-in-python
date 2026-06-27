@@ -122,7 +122,16 @@ Tests are in `tests/` and validate security boundaries:
 - File size limits (10K char cap in get_file_content)
 - Directory vs file handling
 
-Run with: `pytest` or `python tests/test_*.py` directly.
+Run from project root with:
+```bash
+# Run individual test files
+python tests/test_get_file_content.py
+python tests/test_get_files_info.py
+python tests/test_write_file.py
+python tests/test_run_python_file.py
+```
+
+Tests use path insertion to allow imports from anywhere, so run from project root.
 
 ---
 

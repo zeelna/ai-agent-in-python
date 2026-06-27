@@ -476,18 +476,23 @@ Test edge cases, security boundaries, and error conditions.
 
 ## Testing
 
-Run the test suite to validate security boundaries:
+Run the test suite from the project root to validate security boundaries:
 
 ```bash
-# Run all tests
-pytest tests/ -v
-
-# Or run individual test files
+# Run individual test files (recommended - prints human-readable output)
 python tests/test_get_file_content.py
+python tests/test_get_files_info.py
 python tests/test_write_file.py
 python tests/test_run_python_file.py
-python tests/test_get_files_info.py
+
+# Or run all tests at once
+python tests/test_get_file_content.py && \
+python tests/test_get_files_info.py && \
+python tests/test_write_file.py && \
+python tests/test_run_python_file.py
 ```
+
+**Note:** Tests must be run from the project root directory (they automatically add the parent directory to `sys.path`).
 
 Tests verify:
 - ✅ Valid operations work correctly

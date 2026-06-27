@@ -21,6 +21,12 @@ class TestGetFilesInfo(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 """
+import sys
+import os
+
+# Add parent directory to path so imports work from anywhere
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from functions.get_files_info import get_files_info
 
 def test(working_directory: str, directory: str) -> None:
