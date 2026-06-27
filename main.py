@@ -87,26 +87,28 @@ def generate_content(client: genai.Client, messages: list[types.Content] ):
 
 def generate_conversation(response, messages_history, is_verbose):
     function_responses = []
-    for function_call in response.function_calls:
-        function_call_result = call_function(function_call=function_call, verbose=is_verbose)
+    if response.function_calls is not None:
+        # Happy path
+        for function_call in response.function_calls:
+            function_call_result = call_function(function_call=function_call, verbose=is_verbose)
 
-        if not function_call_result.parts:
-            raise Exception("EXCEPTION: cannot call function - missing .parts\n")
+            if not function_call_result.parts:
+                raise Exception("EXCEPTION: cannot call function - missing .parts\n")
 
-        function_response = function_call_result.parts[0].function_response
-        if function_response is None:
-            raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response\n")
+            function_response = function_call_result.parts[0].function_response
+            if function_response is None:
+                raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response\n")
 
-        response_content = function_call_result.parts[0].function_response.response
-        if response_content is None:
-            raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response.response\n")
+            response_content = function_call_result.parts[0].function_response.response
+            if response_content is None:
+                raise Exception("EXCEPTION: cannot call function - missing .parts[x].function_response.response\n")
 
-        # Model must see results of function calls it makes. Append results of function calls in history of messages.
-        function_responses.append(function_call_result.parts[0])
+            # Model must see results of function calls it makes. Append results of function calls in history of messages.
+            function_responses.append(function_call_result.parts[0])
 
-        if is_verbose:
-            print(f"-> {function_call_result.parts[0].function_response.response}")
-        # print(f"Calling function: {function_call.name}({function_call.args})")
+            if is_verbose:
+                print(f"-> {function_call_result.parts[0].function_response.response}")
+            # print(f"Calling function: {function_call.name}({function_call.args})")
 
     # to avoid adding empty list into the parts= argument of types.Content()
     if function_responses:
