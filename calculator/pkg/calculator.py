@@ -9,6 +9,9 @@ class Calculator:
             "*": lambda a, b: a * b,
             "/": lambda a, b: a / b,
         }
+        # todo: TEST: 1) change "+": 'value' to value of 3 (temporarily).
+        # 2) run program in project_root directory by calling:  uv run main.py "fix the bug: ' 3 + 7 * 2' shouldn't be 20" .
+        # This asks our built program to call LLM to fix it (by using function calls 'get_files_info', and 'get_file_contents' and 'write_file').
         self.precedence: dict[str, int] = {
             "+": 1,
             "-": 1,

@@ -6,8 +6,8 @@ def test_run_python_file(working_directory: str, file_path: str, args: list[str]
 
 
 if __name__ == "__main__":
-    test_run_python_file("calculator", "main.py")
-    test_run_python_file("calculator", "main.py", ["3 + 5"])
+    test_run_python_file("calculator", "../main.py")
+    test_run_python_file("calculator", "../main.py", ["3 + 5"])
     test_run_python_file("calculator", "tests.py")
     test_run_python_file("calculator", "../main.py")
     test_run_python_file("calculator", "nonexistent.py")

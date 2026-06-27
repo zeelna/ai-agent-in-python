@@ -13,7 +13,7 @@ def test_small_content(working_directory: str, file_path: str) -> None:
 
 if __name__ == "__main__":
     test_big_content("calculator", "lorem.txt")
-    test_small_content("calculator", "main.py")
+    test_small_content("calculator", "../main.py")
     test_small_content("calculator", "pkg/calculator.py")
     test_small_content("calculator", "/bin/cat") # (this should return an error string)
     test_small_content("calculator", "pkg/does_not_exist.py") #  (this should return an error string)
